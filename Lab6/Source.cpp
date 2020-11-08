@@ -1,49 +1,64 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
-int ReadFile(ifstream& inFile);
+int BinaryToDecimal(ifstream& inFile);
 
 int main()
 {
 	ifstream inFile;
 
-	ReadFile(inFile);
+	cout << BinaryToDecimal(inFile) << endl;
+	
 
 	return 0;
 }
 
-int ReadFile(ifstream& inFile) {
+int BinaryToDecimal(ifstream& inFile) {
 
 	char input;
-	int powerOfTwo = 0;
-	int sum = 0;
+	int total = 0;
+	string binaryNum = "";
 
 	inFile.open("test.txt");
 
 	if (!inFile) {
-		cout << "Input file failed to open.";
+		cout << "The input file failed to open\n";
 		return 1;
 	}
 
 	inFile.get(input);
 
-	int bitPosition = 0;
+	cout << "Binary Number: " << "\t\tDecimal Equivalent:\n";
+
 	while (inFile) {
+		
 
-		if (bitPosition == 0)
-			powerOfTwo += 1;
-		else
-			powerOfTwo = (powerOfTwo * 2);
+		if (input == '1')
+			binaryNum += input;
+		else if (input == '0')
+			binaryNum += input;
 
-		sum += powerOfTwo;
+		if (input == '1') {
+			total = (total * 2) + 1;
+		}
+		else if (input == '0') {
+			total = (total * 2) + 0;
+		}
 
-		cout << sum << endl;
-
-		bitPosition++;
 		inFile.get(input);
+
+		if (input == '\n')
+		{
+			cout << setw(8) << binaryNum << "\t\t\t" << total << endl;
+			total = 0;
+			binaryNum = "";
+		}
 	}
+
+	return total;
 
 	inFile.close();
 
