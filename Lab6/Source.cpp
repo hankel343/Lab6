@@ -35,12 +35,13 @@ int BinaryToDecimal(ifstream& inFile) {
 
 	while (inFile) {
 		
-
+		//Conditions create a string of 1's and 0's to represent the binary number in output
 		if (input == '1')
 			binaryNum += input;
 		else if (input == '0')
 			binaryNum += input;
 
+		//Calculates from binary to decimal
 		if (input == '1') {
 			total = (total * 2) + 1;
 		}
@@ -50,9 +51,10 @@ int BinaryToDecimal(ifstream& inFile) {
 
 		inFile.get(input);
 
+		//Goes to new line
 		if (input == '\n')
 		{
-			cout << setw(8) << binaryNum << "\t\t\t" << total << endl;
+			cout << setw(binaryNum.length() + 7) << binaryNum << "\t\t\t" << total << endl;
 			total = 0;
 			binaryNum = "";
 		}
