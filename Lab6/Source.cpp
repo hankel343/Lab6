@@ -1,67 +1,66 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+
 
 using namespace std;
 
-int BinaryToDecimal(ifstream& inFile);
+void ReadFile(ifstream& inFile);
 
 int main()
 {
-	ifstream inFile;
+    ifstream inFile;
 
-	cout << BinaryToDecimal(inFile) << endl;
-	
 
-	return 0;
+    ReadFile(inFile);
+
+
+    return 0;
 }
 
-int BinaryToDecimal(ifstream& inFile) {
+void ReadFile(ifstream& inFile) {
 
-	char input;
-	int total = 0;
-	string binaryNum = "";
+    char input;
+    int total = 0, num = 0;
+    string binaryNum = "";
 
-	inFile.open("test.txt");
+    inFile.open("test.txt");
 
-	if (!inFile) {
-		cout << "The input file failed to open\n";
-		return 1;
-	}
+    if (!inFile) { //If input file fails to open
+        cout << "The input file failed to open\n";
+    }
 
-	inFile.get(input);
 
-	cout << "Binary Number: " << "\t\tDecimal Equivalent:\n";
 
-	while (inFile) {
-		
-		//Conditions create a string of 1's and 0's to represent the binary number in output
-		if (input == '1')
-			binaryNum += input;
-		else if (input == '0')
-			binaryNum += input;
+    while (inFile.get(input)) {
 
-		//Calculates from binary to decimal
-		if (input == '1') {
-			total = (total * 2) + 1;
-		}
-		else if (input == '0') {
-			total = (total * 2) + 0;
-		}
+        if (input == '1') { //Checks to see if input is a 1
+            binaryNum += input; //Adds the '1' to the binaryNum string
+            total = (total * 2) + 1; // Multiplying by two accounts for the next highest place value in binary
+            num++; //Reads place value in binary
+        }
+        else if (input == '0') { //Checks to see if input is a 0
+            binaryNum += input; //Adds a '0' to the binaryNum string
+            total = (total * 2) + 0; //Multiplying by two accounts for the next hightest place value in binary, and the current value isn't added because it is a 0.
+            num++;
+        }
+        else if ((isalpha(input)) || (input == ' ' && num > 0)) { //if (input(is a letter)) OR there is a space between binary values)
+            binaryNum = "";
+            total = 0;
+            num = 0;
+            cout << "Bad data on input" << endl;
+            inFile.ignore(1000, '\n');
+        }
+        else if (input == '\n' && num == 0) {
+            continue;
+        }
 
-		inFile.get(input);
+        if (input == '\n' && num > 0) {
+            cout << binaryNum << ' ' << total << endl;
+            total = 0;
+            num = 0;
+            binaryNum = "";
+        }
 
-		//Goes to new line
-		if (input == '\n')
-		{
-			cout << setw(binaryNum.length() + 7) << binaryNum << "\t\t\t" << total << endl;
-			total = 0;
-			binaryNum = "";
-		}
-	}
-
-	return total;
-
-	inFile.close();
+    }
 
 }
