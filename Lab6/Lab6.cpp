@@ -7,46 +7,64 @@ using namespace std;
 //void PrintBinaryValues(string binaryNum);
 //void PrintDecimalValues(int total);
 
+/***********
+* Prototypes
+************/
+
 void FileCheck(ifstream& inFile);
+//Pre: The function is passed a input stream variable
+//Post: The function will verify the state of the input file when it is first opened (either opens successfully or terminates main because the input file failed to open).
+
 void PrintTable(int total, string binaryNum);
+//Pre: The main function has successfully read in a series of binary numbers, stored them to a string called binaryNum and converted the binary to a decimal number
+//Post: The function will output a table with the binary number that has been read in with its decimal equivalent
+
 int DecimalPlaceValue(int total);
+//Pre: The main function has successfully calculated a decimal number called total which is passed to the function by value
+//Post: Function returns the number of place values in the decimal number
+
 void ResetCounters(int& total, int& position, string& binaryNum);
+//Pre: The while loop has either encountered the end of a line or an error in the input stream
+//Post: Function resets the values of counters that are used during program execution.
 
 int main()
 {
 	ifstream inFile;
-	char input;
+	char input; //Reads the character from the input file
 
-
-	cout << setw(22) << "Binary Number:" << setw(24) << "Decimal Equivalent:" << endl;
+	cout << setw(22) << "Binary Number:" << setw(24) << "Decimal Equivalent:" << endl; //Heading for output
 
 	FileCheck(inFile);
 
-	//Priming read for file input loop.
-	inFile.get(input);
-
 	int total = 0; //Stores the decimal equivalent of input.
-	int position = 0; //Counter that keeps track of input position
-	string binaryNum = ""; //Empty string to store input chars as they're read from input file.
-	while (inFile) {
+	int position = 0; //Counter that keeps track of input cursor position
+	string binaryNum = ""; //Empty string to store input chars for binary number as they're read from input file.
+	while (inFile.get(input)) {
 		
-		if (input == '1') { //If input char is a '1'
+		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file
 
-			binaryNum += input; //Use string concatenation to add the input to a string 
+			//Prints output to table in the console.
+			PrintTable(total, binaryNum);
+
+			//Resets counters for the next line of input
+			ResetCounters(total, position, binaryNum);
+		}
+		else if (input == '1') { //If input char is a '1'
+
+			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string 
 			total = (total * 2) + 1; //Multiply the total by 2 to account for the next highest place value and add 1
 			position++; //Increment the position counter
 		}
 		else if (input == '0') {
 
-			binaryNum += input; //Use string concatenation to add the input to a string
+			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string
 			total = (total * 2) + 0; //Multiply the total by 2 to account for the next highest place value and add 0 (adding zero leaves the total unchanged except for increasing place value)
 			position++; //Increment the position counter
 		}
-		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first line for a character
-			inFile.get(input);
+		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first spot for a character
 			continue; //Re-evaluate logic from beginning of the loop with the new character.
 		}
-		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code is less than '0' or greater than '1' AND NOT space (32 ASCII code) OR there is a space in a binary number
+		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code is less than '0' or greater than '1' AND NOT space (32 is ASCII code) OR there is a space in a binary number
 
 			//Print error message to the console
 			cout << setw(24) << "Bad data on input\n"; 
@@ -58,16 +76,7 @@ int main()
 			inFile.ignore(1000, '\n');
 		}
 
-		inFile.get(input);
-
-		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file
-
-			//Prints output to table in the console.
-			PrintTable(total, binaryNum);
-
-			//Resets counters for the next line of input
-			ResetCounters(total, position, binaryNum);
-		}
+		
 	}
 
 	inFile.close();
