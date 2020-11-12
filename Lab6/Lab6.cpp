@@ -1,15 +1,23 @@
+/*
+* Hankel Haldin
+* Lab 6: Program reads in characters representing binary and prints them and their decimal equivalent to a table in the console.
+* Due: 11/16/2020
+* 
+* Program uses an EOF while loop to read individual characters from an input file. These characters are then evaluated against -
+* several conditions within the while loop that determine what to do with the character. The table these values are output to are -
+* controled by two switch statements in the void function PrintTable which determine the binary place value as well as the decimal -
+* place value for output spacing.
+*/
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 
 using namespace std;
 
-//void PrintBinaryValues(string binaryNum);
-//void PrintDecimalValues(int total);
-
-/***********
-* Prototypes
-************/
+/************
+* Prototypes*
+*************/
 
 void FileCheck(ifstream& inFile);
 //Pre: The function is passed a input stream variable
@@ -30,16 +38,24 @@ void ResetCounters(int& total, int& position, string& binaryNum);
 int main()
 {
 	ifstream inFile;
-	char input; //Reads the character from the input file
+	
+	FileCheck(inFile);
 
 	cout << setw(22) << "Binary Number:" << setw(24) << "Decimal Equivalent:" << endl; //Heading for output
 
-	FileCheck(inFile);
-
+	char input; //Reads the character from the input file
 	int total = 0; //Stores the decimal equivalent of input.
 	int position = 0; //Counter that keeps track of input cursor position
 	string binaryNum = ""; //Empty string to store input chars for binary number as they're read from input file.
-	while (inFile.get(input)) {
+
+	while (inFile.get(input) || (total != 0)) { //While the input stream isn't in the failed state or there is a running total for a decimal number
+		
+		if (input == '0' && position == 0) { //If a 0 is read on the first space of a line
+
+			while (input != '1') { //Read values in until the first '1' is found to get rid of leading zeros in output
+				inFile.get(input);
+			}
+		}
 		
 		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file
 
@@ -61,10 +77,10 @@ int main()
 			total = (total * 2) + 0; //Multiply the total by 2 to account for the next highest place value and add 0 (adding zero leaves the total unchanged except for increasing place value)
 			position++; //Increment the position counter
 		}
-		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first spot for a character
-			continue; //Re-evaluate logic from beginning of the loop with the new character.
+		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first spot for a character (Finds a blank line)
+			continue; //Re-evaluate logic from beginning of the loop with a new character.
 		}
-		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code is less than '0' or greater than '1' AND NOT space (32 is ASCII code) OR there is a space in a binary number
+		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code for input is less than '0' or greater than '1' AND NOT space (32 is ASCII code for ' ') OR there is a space in a binary number
 
 			//Print error message to the console
 			cout << setw(24) << "Bad data on input\n"; 
