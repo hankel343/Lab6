@@ -2,7 +2,7 @@
 * Hankel Haldin
 * Lab 6: Program reads in characters representing binary and prints them and their decimal equivalent to a table in the console.
 * Due: 11/16/2020
-* 
+*
 * Program uses an EOF while loop to read individual characters from an input file. These characters are then evaluated against -
 * several conditions within the while loop that determine what to do with the character. The table these values are output to are -
 * controled by two switch statements in the void function PrintTable which determine the binary place value as well as the decimal -
@@ -38,26 +38,38 @@ void ResetCounters(int& total, int& position, string& binaryNum);
 int main()
 {
 	ifstream inFile;
-	
+
 	FileCheck(inFile);
 
 	cout << setw(22) << "Binary Number:" << setw(24) << "Decimal Equivalent:" << endl; //Heading for output
 
 	char input; //Reads the character from the input file
 	int total = 0; //Stores the decimal equivalent of input.
-	int position = 0; //Counter that keeps track of input cursor position
+	int position = 0; //Counter that keeps track of input cursor position (detects spaces in binary numbers)
 	string binaryNum = ""; //Empty string to store input chars for binary number as they're read from input file.
 
-	while (inFile.get(input) || (total != 0)) { //While the input stream isn't in the failed state or there is a running total for a decimal number
-		
+	while (inFile.get(input) || (total != 0)) { //While the input stream is valid OR there is a running total for a decimal number
+
 		if (input == '0' && position == 0) { //If a 0 is read on the first space of a line
 
-			while (input != '1') { //Read values in until the first '1' is found to get rid of leading zeros in output
+			bool isOne = false;
+			bool isBadData = false;
+
+			while (!isOne && !isBadData) { //While input is NOT a one AND is NOT bad data
+
+				position++; //Increment the file cursor (detects spaces in binary numbers)
 				inFile.get(input);
+
+				if (input == '1')
+					isOne = true; //First one of binary number found
+
+				if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If anything other than a 1 or a 0 is read AND input is not a space in the middle of a binary number
+					isBadData = true; //Bad data found
+				}
 			}
 		}
-		
-		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file
+
+		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file (a complete line of binary)
 
 			//Prints output to table in the console.
 			PrintTable(total, binaryNum);
@@ -69,13 +81,13 @@ int main()
 
 			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string 
 			total = (total * 2) + 1; //Multiply the total by 2 to account for the next highest place value and add 1
-			position++; //Increment the position counter
+			position++; //Increment the file cursor
 		}
 		else if (input == '0') {
 
 			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string
-			total = (total * 2) + 0; //Multiply the total by 2 to account for the next highest place value and add 0 (adding zero leaves the total unchanged except for increasing place value)
-			position++; //Increment the position counter
+			total = (total * 2) + 0; //Multiply the total by 2 to account for the next highest place value and add 0 (adding zero leaves the total unchanged)
+			position++; //Increment the file cursor
 		}
 		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first spot for a character (Finds a blank line)
 			continue; //Re-evaluate logic from beginning of the loop with a new character.
@@ -83,7 +95,7 @@ int main()
 		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code for input is less than '0' or greater than '1' AND NOT space (32 is ASCII code for ' ') OR there is a space in a binary number
 
 			//Print error message to the console
-			cout << setw(24) << "Bad data on input\n"; 
+			cout << setw(24) << "Bad data on input\n";
 
 			//Resets counters for the line.
 			ResetCounters(total, position, binaryNum);
@@ -92,7 +104,7 @@ int main()
 			inFile.ignore(1000, '\n');
 		}
 
-		
+
 	}
 
 	inFile.close();
