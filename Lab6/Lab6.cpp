@@ -48,9 +48,9 @@ int main()
 {
 	ifstream inFile;
 
-	FileCheck(inFile);
-
 	cout << setw(22) << "Binary Number:" << setw(24) << "Decimal Equivalent:" << endl; //Heading for output
+
+	FileCheck(inFile);
 
 	char input; //Reads the character from the input file
 	int total = 0; //Stores the decimal equivalent of input.
@@ -136,67 +136,67 @@ void PrintTable(int total, string binaryNum) {
 	switch (binaryNum.length()) {
 
 	case 1:
-		cout << setw(binaryNum.length() + 14) << binaryNum;
+		cout << setw(long(binaryNum.length() + 14)) << binaryNum;
 		break;
 
 	case 2:
-		cout << setw(binaryNum.length() + 13) << binaryNum;
+		cout << setw(long(binaryNum.length() + 13)) << binaryNum;
 		break;
 
 	case 3:
-		cout << setw(binaryNum.length() + 13) << binaryNum;
+		cout << setw(long(binaryNum.length() + 13)) << binaryNum;
 		break;
 
 	case 4:
-		cout << setw(binaryNum.length() + 12) << binaryNum;
+		cout << setw(long(binaryNum.length() + 12)) << binaryNum;
 		break;
 
 	case 5:
-		cout << setw(binaryNum.length() + 12) << binaryNum;
+		cout << setw(long(binaryNum.length() + 12)) << binaryNum;
 		break;
 
 	case 6:
-		cout << setw(binaryNum.length() + 11) << binaryNum;
+		cout << setw(long(binaryNum.length() + 11)) << binaryNum;
 		break;
 
 	case 7:
-		cout << setw(binaryNum.length() + 11) << binaryNum;
+		cout << setw(long(binaryNum.length() + 11)) << binaryNum;
 		break;
 
 	case 8:
-		cout << setw(binaryNum.length() + 10) << binaryNum;
+		cout << setw(long(binaryNum.length() + 10)) << binaryNum;
 		break;
 
 	case 9:
-		cout << setw(binaryNum.length() + 10) << binaryNum;
+		cout << setw(long(binaryNum.length() + 10)) << binaryNum;
 		break;
 
 	case 10:
-		cout << setw(binaryNum.length() + 9) << binaryNum;
+		cout << setw(long(binaryNum.length() + 9)) << binaryNum;
 		break;
 
 	case 11:
-		cout << setw(binaryNum.length() + 9) << binaryNum;
+		cout << setw(long(binaryNum.length() + 9)) << binaryNum;
 		break;
 
 	case 12:
-		cout << setw(binaryNum.length() + 8) << binaryNum;
+		cout << setw(long(binaryNum.length() + 8)) << binaryNum;
 		break;
 
 	case 13:
-		cout << setw(binaryNum.length() + 8) << binaryNum;
+		cout << setw(long(binaryNum.length() + 8)) << binaryNum;
 		break;
 
 	case 14:
-		cout << setw(binaryNum.length() + 7) << binaryNum;
+		cout << setw(long(binaryNum.length() + 7)) << binaryNum;
 		break;
 
 	case 15:
-		cout << setw(binaryNum.length() + 7) << binaryNum;
+		cout << setw(long(binaryNum.length() + 7)) << binaryNum;
 		break;
 
 	case 16:
-		cout << setw(binaryNum.length() + 6) << binaryNum;
+		cout << setw(long(binaryNum.length() + 6)) << binaryNum;
 		break;
 
 	default:
