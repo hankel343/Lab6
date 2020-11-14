@@ -96,7 +96,7 @@ int main()
 }
 
 void FileCheck(ifstream& inFile) {
-	inFile.open("BinaryIn.txt");
+	inFile.open("BinaryIn.dat");
 
 	if (!inFile) {
 		cout << "The input file failed to open.\n";
