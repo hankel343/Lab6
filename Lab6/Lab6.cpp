@@ -1,13 +1,14 @@
-/*
+/***********************************************************************************************************************************************
 * Hankel Haldin
 * Lab 6: Program reads in characters representing binary and prints them and their decimal equivalent to a table in the console.
 * Due: 11/16/2020
 *
-* Program uses an EOF while loop to read individual characters from an input file. These characters are then evaluated against -
-* several conditions within the while loop that determine what to do with the character. The table these values are output to are -
+* Description of program:
+* Program uses an EOF while loop to read individual characters from an input file using cin.get(). These characters are then evaluated against -
+* if-else clauses within the while loop that determine what to do with the character. The table these values are output to are -
 * controled by two switch statements in the void function PrintTable which determine the binary place value as well as the decimal -
-* place value for output spacing.
-*/
+* place value for output spacing to be centered and follow a consistent pattern. There is a 16-bit maximum for decimal input.
+***********************************************************************************************************************************************/
 
 #include <iostream>
 #include <fstream>
@@ -23,9 +24,17 @@ void FileCheck(ifstream& inFile);
 //Pre: The function is passed a input stream variable
 //Post: The function will verify the state of the input file when it is first opened (either opens successfully or terminates main because the input file failed to open).
 
+void RemoveLeadingZeros(ifstream& inFile, char& input, int& position);
+//Pre: The input cursor has encountered a 0 in the first position of the input file
+//Post: The function move the input cursor forward to the first significant digit (i.e. 1) or detect an error in the input stream.
+
 void PrintTable(int total, string binaryNum);
 //Pre: The main function has successfully read in a series of binary numbers, stored them to a string called binaryNum and converted the binary to a decimal number
 //Post: The function will output a table with the binary number that has been read in with its decimal equivalent
+
+void AddToTotal(int& total, char input, int& position, string& binaryNum);
+//Pre: The input stream has read a character from the input file that is either a '1' or a '0'.
+//Post: The function updates the location of the decimal total for the conversion from binary to decimal.
 
 int DecimalPlaceValue(int total);
 //Pre: The main function has successfully calculated a decimal number called total which is passed to the function by value
@@ -51,22 +60,7 @@ int main()
 	while (inFile.get(input) || (total != 0)) { //While the input stream is valid OR there is a running total for a decimal number
 
 		if (input == '0' && position == 0) { //If a 0 is read on the first space of a line
-
-			bool isOne = false;
-			bool isBadData = false;
-
-			while (!isOne && !isBadData) { //While input is NOT a one AND is NOT bad data
-
-				position++; //Increment the file cursor (detects spaces in binary numbers)
-				inFile.get(input);
-
-				if (input == '1')
-					isOne = true; //First one of binary number found
-
-				if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If anything other than a 1 or a 0 is read AND input is not a space in the middle of a binary number
-					isBadData = true; //Bad data found
-				}
-			}
+			RemoveLeadingZeros(inFile, input, position);
 		}
 
 		if ((input == '\n' && position > 0) || (!inFile)) { //If file input cursor has read a new line where the position is atleast one OR reached end of file (a complete line of binary)
@@ -77,19 +71,11 @@ int main()
 			//Resets counters for the next line of input
 			ResetCounters(total, position, binaryNum);
 		}
-		else if (input == '1') { //If input char is a '1'
-
-			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string 
-			total = (total * 2) + 1; //Multiply the total by 2 to account for the next highest place value and add 1
-			position++; //Increment the file cursor
-		}
-		else if (input == '0') {
-
-			binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string
-			total = (total * 2) + 0; //Multiply the total by 2 to account for the next highest place value and add 0 (adding zero leaves the total unchanged)
-			position++; //Increment the file cursor
+		else if (input == '1' || input == '0') { //If input char is a '1' or a '0'.
+			AddToTotal(total, input, position, binaryNum);
 		}
 		else if (input == '\n' && position == 0) { //If the cursor reads a newline character on the first spot for a character (Finds a blank line)
+
 			continue; //Re-evaluate logic from beginning of the loop with a new character.
 		}
 		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code for input is less than '0' or greater than '1' AND NOT space (32 is ASCII code for ' ') OR there is a space in a binary number
@@ -100,22 +86,39 @@ int main()
 			//Resets counters for the line.
 			ResetCounters(total, position, binaryNum);
 
-			//Ignores all data on the input line with bad data
+			//Ignores all characters on the input line with bad data
 			inFile.ignore(1000, '\n');
 		}
-
-
 	}
 
-	inFile.close();
+	inFile.close(); //Close the input file.
 	return 0;
 }
 
 void FileCheck(ifstream& inFile) {
-	inFile.open("BinaryIn.dat");
+	inFile.open("BinaryIn.txt");
 
 	if (!inFile) {
 		cout << "The input file failed to open.\n";
+	}
+}
+
+void RemoveLeadingZeros(ifstream& inFile, char& input, int& position) {
+
+	bool isOne = false;
+	bool isBadData = false;
+
+	while (!isOne && !isBadData) { //While input is NOT a one AND is NOT bad data
+
+		position++; //Increment the file cursor (detects spaces in binary numbers)
+		inFile.get(input);
+
+		if (input == '1')
+			isOne = true; //First one of binary number found - continue to appropriate clause of if-else in the main function
+
+		if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If anything other than a 1 or a 0 is read AND input is not a space in the middle of a binary number
+			isBadData = true; //Bad data found - continue with bad input to error message clause of if-else in the main function
+		}
 	}
 }
 
@@ -263,6 +266,21 @@ void PrintTable(int total, string binaryNum) {
 		}
 		break;
 	}
+}
+
+void AddToTotal(int& total, char input, int& position, string& binaryNum) {
+
+	//Adds either one or zero
+	int n;
+
+	if (input == '1')
+		n = 1;
+	else
+		n = 0;
+
+	binaryNum += input; //Use string concatenation to add the input 1 or 0 to a string 
+	total = (total * 2) + n; //Multiply the total by 2 to account for the next highest place value and add 1
+	position++; //Increment the file cursor
 }
 
 int DecimalPlaceValue(int total) {
