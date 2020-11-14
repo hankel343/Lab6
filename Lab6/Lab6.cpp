@@ -195,10 +195,10 @@ void PrintTable(int total, string binaryNum) {
 
 	case 1:
 
-		if (total < 6) {
+		if (total < 4) {
 			cout << setw(20) << total << endl;
 		}
-		else 
+		else
 			cout << setw(19) << total << endl;
 		break;
 
@@ -234,17 +234,21 @@ void PrintTable(int total, string binaryNum) {
 		else if (total >= 2048 && total <= 4095) {
 			cout << setw(16) << total << endl;
 		}
-		else if (total >= 4096 && total < 10000)
+		else if (total >= 4096 && total < 10000) {
 			cout << setw(15) << total << endl;
+		}
 		break;
 
 	case 5:
-		if (total >= 10000 && total < 16384)
+		if (total >= 10000 && total < 16384) {
 			cout << setw(16) << total << endl;
-		else if (total >= 16384 && total <= 32768)
+		}
+		else if (total >= 16384 && total <= 32768) {
 			cout << setw(15) << total << endl;
-		else if (total > 32768 && total <= 65535)
+		}
+		else if (total > 32768 && total <= 65535) {
 			cout << setw(15) << total << endl;
+		}
 		break;
 	}
 }
