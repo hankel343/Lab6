@@ -78,7 +78,7 @@ int main()
 
 			continue; //Re-evaluate logic from beginning of the loop with a new character.
 		}
-		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code for input is less than '0' or greater than '1' AND NOT space (32 is ASCII code for ' ') OR there is a space in a binary number
+		else if ((int(input) < '0' || int(input) > '1') && (input != ' ') || (input == ' ' && position > 0)) { //If the ASCII code for input is less than '0' or greater than '1' AND NOT a space (32 is ASCII code for ' ') OR there is a space in a binary number when position > 0
 
 			//Print error message to the console
 			cout << setw(24) << "Bad data on input\n";
